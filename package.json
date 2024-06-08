@@ -21,9 +21,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --config webpack.config.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build:frontend": "webpack --config webpack.config.js",
+    "build:backend": "tsc --project tsconfig.server.json",
+    "build": "npm run build:frontend && npm run build:backend"
   },
   "eslintConfig": {
     "extends": [
