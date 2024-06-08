@@ -1,14 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: {
-    main: './src/index.tsx',
-  },
+  entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
+    clean: true, // Clean the output directory before emit.
   },
   mode: 'production',
   module: {
@@ -30,16 +29,15 @@ module.exports = {
       path: require.resolve('path-browserify'),
     },
   },
-  optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin()],
-    splitChunks: {
-      chunks: 'all',
-    },
-  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
-    })
-  ]
+      template: './public/index.html', // This template will be used to generate index.html
+      filename: 'index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '.', globOptions: { ignore: ['**/index.html'] } }, // Copy other public files
+      ],
+    }),
+  ],
 };
