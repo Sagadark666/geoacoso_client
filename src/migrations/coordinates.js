@@ -1,14 +1,16 @@
-import { Knex } from "knex";
+// src/migrations/coordinates.js
 
-export async function up(knex: Knex): Promise<void> {
+const { Knex } = require("knex");
+
+exports.up = async function (knex) {
   await knex.schema.createTable("coordinates", (table) => {
     table.increments("id");
-    table.datetime("captured_at")
+    table.datetime("captured_at");
     table.float("latitude");
     table.float("longitude");
   });
-}
+};
 
-export async function down(knex: Knex): Promise<void> {
+exports.down = async function (knex) {
   await knex.schema.dropTable("coordinates");
-}
+};
