@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React from 'react';
 import MapComponent from './components/MapComponent';
 import { addCoordinate } from './db/model';
