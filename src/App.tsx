@@ -1,5 +1,5 @@
 import React from 'react';
-import MapComponent from './components/MapComponent';
+const MapComponent = React.lazy(() => import('./components/MapComponent'));
 import { addCoordinate } from './db/model';
 import './styles/App.css';
 
