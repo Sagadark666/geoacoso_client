@@ -15,7 +15,7 @@ const Reportar: React.FC = () => {
 
   return (
     <div className="reportar">
-      <div className="app-name">GeoAcoso - Reportar</div>
+      <div className="app-name">GeoAcoso - Reporte</div>
       <React.Suspense fallback={<div>Loading...</div>}>
         <Map onMapClick={handleMapClick} />
       </React.Suspense>
