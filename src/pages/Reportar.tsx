@@ -20,7 +20,7 @@ const Reportar: React.FC = () => {
         <Map onMapClick={handleMapClick} />
       </React.Suspense>
       <div className="map-attribution">
-        <span className="organization-name">Las Polas</span>
+        <span className="organization-name">Colectivo Las Polas</span>
       </div>
     </div>
   );
