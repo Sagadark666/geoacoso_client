@@ -1,21 +1,17 @@
 import React from 'react';
-const MapComponent = React.lazy(() => import('./components/MapComponent'));
-import { addCoordinate } from './db/model';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Reportar from './pages/Reportar';
+import NotFound from './pages/404'; // Import the 404 page component
 import './styles/App.css';
 
 const App: React.FC = () => {
-  const handleMapClick = async (lat: number, lng: number, showSuccess: (message: string) => void) => {
-    await addCoordinate(lat, lng);
-    showSuccess("¡Reporte guardado exitosamente!"); // Pass success message
-  };
-
   return (
     <div className="app">
-      <div className="app-name">GeoAcoso</div>
-      <MapComponent onMapClick={handleMapClick} />
-      <div className="map-attribution">
-        <span className="organization-name">Your Organization Name</span>
-      </div>
+      <Routes>
+        <Route path="/" element={<Navigate to="/reportar" />} />
+        <Route path="/reportar" element={<Reportar />} />
+        <Route path="*" element={<NotFound />} /> {/* Use the 404 page component */}
+      </Routes>
     </div>
   );
 };

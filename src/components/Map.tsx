@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { MapContainer, TileLayer, Popup, LayersControl, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, LayersControl, useMap, useMapEvents } from "react-leaflet";
 import { LatLng } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { streets, satellite } from "../config/layers";
-import "../styles/Popup.css";
+import Popup from "./Popup";
+import "../styles/Map.css";
 
-interface MapComponentProps {
-  onMapClick: (lat: number, lng: number, showSuccess: (message: string) => void) => void;
+interface MapProps {
+  onMapClick: (lat: number, lng: number, showSuccess: (message: string) => void) => Promise<void>;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
+const Map: React.FC<MapProps> = ({ onMapClick }) => {
   const [popupPosition, setPopupPosition] = useState<LatLng | null>(null);
   const [address, setAddress] = useState<string>("Obteniendo dirección...");
   const [shouldResetMap, setShouldResetMap] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const initialCenter: LatLng = new LatLng(5.3328378, -72.4116007);
   const initialZoom: number = 14;
 
@@ -36,15 +38,14 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
 
   const MapEvents = () => {
     useMapEvents({
-      click: async (e: any) => {
-        // Only set a new popup position if it is currently null
+      click: async (e) => {
         if (!popupPosition) {
           const { lat, lng } = e.latlng;
           setPopupPosition(new LatLng(lat, lng));
           setAddress("Obteniendo dirección...");
-          setSuccessMessage(null); // Clear any previous success message
+          setSuccessMessage(null);
+          setErrorMessage(null);
 
-          // Fetch address asynchronously
           const fetchedAddress = await getAddress(lat, lng);
           setAddress(fetchedAddress);
         }
@@ -60,64 +61,42 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
       if (shouldResetMap) {
         map.flyTo(initialCenter, initialZoom, {
           animate: true,
-          duration: 1.5, // Adjust the duration for the smoothness you want
+          duration: 1.5,
         });
-        setPopupPosition(null); // Remove popup
-        setShouldResetMap(false); // Reset the trigger
+        setPopupPosition(null);
+        setShouldResetMap(false);
       }
     }, [shouldResetMap, map]);
 
     return null;
   };
 
-  const handleReport = useCallback(() => {
+  const handleReport = useCallback(async () => {
     if (popupPosition) {
-      onMapClick(popupPosition.lat, popupPosition.lng, (message) => {
-        setSuccessMessage(message);
-        setTimeout(() => {
-          setSuccessMessage(null);
-          setPopupPosition(null);
-          setShouldResetMap(true); // Trigger map reset
-        }, 2000); // Adjust the time as needed
-      });
+      try {
+        await onMapClick(popupPosition.lat, popupPosition.lng, (message) => {
+          setSuccessMessage(message);
+          setTimeout(() => {
+            setSuccessMessage(null);
+            setPopupPosition(null);
+            setShouldResetMap(true);
+          }, 2000);
+        });
+      } catch (error) {
+        console.error('Error during report:', error);
+        setErrorMessage('Error al guardar el reporte. Por favor, inténtelo de nuevo más tarde.');
+      }
     }
   }, [onMapClick, popupPosition]);
 
   const handleCancel = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent map click from being triggered
+    e.stopPropagation();
     setPopupPosition(null);
   };
 
-  const popupContent = (
-    <div className="popup-content">
-      {successMessage ? (
-        <div className="popup-success">
-          <p>{successMessage}</p>
-        </div>
-      ) : (
-        <>
-          <div className="popup-header">
-            <span className="icon">📍</span> {/* Use any suitable icon */}
-            Realizar Reporte
-          </div>
-          {popupPosition && (
-            <>
-              <div className="popup-coordinates">
-                <p><strong>Latitud:</strong> {popupPosition.lat.toPrecision(6)} <strong>Longitud:</strong> {popupPosition.lng.toPrecision(6)}</p>
-              </div>
-              <div className="popup-address">
-                <p><strong>Dirección:</strong> {address}</p>
-              </div>
-              <div className="popup-buttons">
-                <button onClick={handleCancel} className="popup-button cancel">Cancelar</button>
-                <button onClick={handleReport} className="popup-button report">Reportar</button>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </div>
-  );
+  const handlePopupClose = () => {
+    setPopupPosition(null);
+  };
 
   return (
     <MapContainer
@@ -138,16 +117,17 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
       {popupPosition && (
         <Popup
           position={popupPosition}
-          eventHandlers={{
-            remove: () => setPopupPosition(null), // This handles the popup close event
-          }}
-        >
-          {popupContent}
-        </Popup>
+          address={address}
+          successMessage={successMessage}
+          errorMessage={errorMessage} // Pass error message to Popup
+          onCancel={handleCancel}
+          onReport={handleReport}
+          onClose={handlePopupClose}
+        />
       )}
-      <ResetMapComponent /> {/* Include the reset component */}
+      <ResetMapComponent />
     </MapContainer>
   );
 };
 
-export default MapComponent;
+export default Map;

@@ -37,12 +37,20 @@
   }
 }
 
-/* src/App.css */
-
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevents body scrolling */
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
 .app {
@@ -50,39 +58,3 @@ body {
   height: 100vh;
   width: 100vw;
 }
-
-.app-name {
-  position: absolute;
-  top: 10px;
-  left: 50px;
-  background-color: rgba(255, 255, 255, 0.7);
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 1.5em;
-  font-weight: bold;
-  z-index: 1000; /* Ensure it is on top of the map */
-}
-
-.map-container {
-  height: 100%;
-  width: 100%;
-}
-
-.map-attribution {
-  position: absolute;
-  bottom: 1px;
-  right: 240px;
-  background-color: rgba(255, 255, 255, 0.7);
-  padding: 3px;
-  border-radius: 5px;
-  font-size: 0.7em;
-  z-index: 1000; /* Ensure it is on top of the map */
-  display: flex;
-  align-items: center;
-}
-
-.organization-name {
-  font-weight: bold;
-}
-
-

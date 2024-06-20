@@ -1,0 +1,34 @@
+.reportar {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.app-name {
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 1000;
+}
+
+.map-attribution {
+  position: absolute;
+  bottom: 1px;
+  right: 240px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 3px;
+  border-radius: 5px;
+  font-size: 0.7em;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.organization-name {
+  font-weight: bold;
+}
