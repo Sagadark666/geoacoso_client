@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -39,5 +41,9 @@ module.exports = {
         { from: 'public', to: '.', globOptions: { ignore: ['**/index.html'] } }, // Copy other public files
       ],
     }),
+    new Dotenv(), // Load environment variables from .env file
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_API_BASE_URL': JSON.stringify(process.env.REACT_APP_API_BASE_URL)
+    })
   ],
 };
